@@ -20,49 +20,62 @@ import numpy as np
 # dates = ws_14day.row_values(1)
 # numbers = ws_14day.row_values(109)
 
-df = pd.read_csv("/home/bhabas/Documents/Covid_Plot/COVID-19 Tracking Workbook - PA - 14 Day per 100k by Region_County.csv", delimiter=',')
-df = df.replace(np.nan,0)
-df = df.replace(',','', regex=True)
-data = df.to_numpy()
+def csv_to_array(): # converts csv to data array
+    df = pd.read_csv("/home/bhabas/Documents/Covid_Plot/COVID-19 Tracking Workbook - PA - 14 Day per 100k by Region_County.csv", delimiter=',')
+    df = df.replace(np.nan,0)
+    df = df.replace(',','', regex=True)
+    data_array = df.to_numpy()
+
+    return(data_array)
+
+def index_finder(data,location): # Returns index loc of county and created dict
+    data_dict = {}
+    for A, B in zip(data[:,0],data[:,1]):
+        data_dict[A] = B
+
+    index_loc = list(data_dict.keys()).index(location)
+
+    return index_loc,data_dict
+
+def biwk_avg_plot(dates,biwk_avg,location):
+        fig = plt.figure()
+        fig.tight_layout()
+
+        ax = fig.add_subplot(111)
+        ax = fig.gca()
+        ax.grid()
+        ax.plot(dates,biwk_avg)
 
 
-loc = {
-    "Centre": 107,
-    "Erie": 118
-}
-
-
-
-location = "Centre"
-
-dates = np.arange(0,128)
-biwk_avg = data[loc[location],2:].astype(np.int)
-
-
-
-
-fig = plt.figure()
-fig.tight_layout()
-
-ax = fig.add_subplot(111)
-ax = fig.gca()
-ax.grid()
-ax.plot(dates,biwk_avg)
-
-
-ax.axhline(y=50,c='0.55',linestyle='--',dashes = (10,5))
-ax.set_ylim(0,100)
-ax.set( ylabel= '14 Day per 100k', 
-    xlabel = 'Date',
-    title = '%s County' %(location))
-
-
-plt.show()
+        ax.axhline(y=50,c='0.55',linestyle='--',dashes = (10,5))
+        ax.text(2,51,'50 Cases per 14 Days')
+        # ax.set_ylim(0,100)
+        ax.set_xlim(0)
+        ax.set( ylabel= '14 Day per 100k', 
+            xlabel = 'Date',
+            title = '%s County' %(location))
+        plt.show()
 
 
 
-# def main():
-#     pass
+if __name__ == "__main__":
 
-# if __name__ == "__main__":
-#     main()
+    location = "Allegheny"
+
+    data_total = csv_to_array()
+    sum_data =  data_total[0:83,:]
+    region_avg = data_total[85:90,:]
+    county_avg = data_total[94:160,:]
+
+
+    dates = np.arange(0,data_total.shape[1]-2)
+
+
+
+    index_loc =  index_finder(county_avg,location)[0]   
+   
+
+    biwk_avg = county_avg[index_loc,2:].astype(np.int)
+
+
+    biwk_avg_plot(dates,biwk_avg,location)
