@@ -1,0 +1,27 @@
+## State Positivity Rate
+# pos_rate = state_data[21,:]
+
+## State Total Cases
+# state_total = state_data[0,:]
+
+## To-Do
+# https://matplotlib.org/3.1.0/gallery/subplots_axes_and_figures/multiple_figs_demo.html#sphx-glr-gallery-subplots-axes-and-figures-multiple-figs-demo-py
+# Plot low capita rate: Erie, Centre
+#     List total cases in past 14 days
+# Plot high capita rate: Allegheny, Philedelphia, Lehigh
+#     List total cases in past 14 days
+# https://matplotlib.org/3.1.0/gallery/recipes/placing_text_boxes.html#sphx-glr-gallery-recipes-placing-text-boxes-py
+
+
+# Plot State Total
+#     Side plot of positivity rate?
+
+# Incorporate pulling data from gspread
+
+# Break in x-axis to highlight more recent numbers
+#     https://stackoverflow.com/questions/32185411/break-in-x-axis-of-matplotlib
+#     https://matplotlib.org/3.1.0/gallery/scales/custom_scale.html#sphx-glr-gallery-scales-custom-scale-py
+# ## Email to people
+# ## Post Weekly On Facebook
+
+# US Total?
