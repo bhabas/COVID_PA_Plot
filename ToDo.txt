@@ -14,13 +14,18 @@
 
 
 # Plot State Total
-#     Side plot of positivity rate?
+#     Side plot of positivity rate
+            add % to side ticks
+            include 10% in side tick
 
 # Incorporate pulling data from gspread
 
 # Break in x-axis to highlight more recent numbers
 #     https://stackoverflow.com/questions/32185411/break-in-x-axis-of-matplotlib
 #     https://matplotlib.org/3.1.0/gallery/scales/custom_scale.html#sphx-glr-gallery-scales-custom-scale-py
+
+
+Highlight past week
 # ## Email to people
 # ## Post Weekly On Facebook
 
