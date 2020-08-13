@@ -7,10 +7,32 @@ import numpy as np
 from datetime import datetime
 # data = county_data
 
-def plot_biwk_sum(data,locations,dates,pop_dict):
-    today = datetime.today().strftime('%m/%d/%y')
+def fips_lookup(county,state):
 
-    county_sum =  data[0:83,:]
+    url = 'https://raw.githubusercontent.com/kjhealy/fips-codes/master/state_and_county_fips_master.csv'
+    df = pd.read_csv(url)
+
+    fips = df.loc[(df['state'] == state) & (df['name'] == county + " County")].values[0,0]
+
+    return(fips)
+
+def pop_lookup(fips):
+    df = pd.read_csv("CSV Files/county_population.csv", encoding = "latin")
+
+    population = df.loc[df['fips'] == fips].values[:,-1] # reads last columns values which are 2014 pop
+    population = np.nanmax(population) # finds max of two (ignoring nan) since val loc are random
+    return(population)
+
+
+def plot_biwk_sum(locations):
+
+    url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv'
+    df = pd.read_csv(url, delimiter=',')
+    start_index = df.columns.get_loc("3/15/20") # Specified start date of data
+    dates = list(df.columns.values[start_index:])
+    dates = [datetime.strptime(x, '%m/%d/%y') for x in dates]
+
+    today = datetime.today().strftime('%m/%d/%y')
 
     ## Figure Initializing
 
@@ -18,26 +40,25 @@ def plot_biwk_sum(data,locations,dates,pop_dict):
     ax = fig.add_subplot(111)
     ax.grid()
 
-    ## Data Plotting
-    for i in range(len(locations)):
-        roll_amount = 14
-    
-        pop_factor = int(pop_dict[locations[i]])/100e3 # per 100k people
+    for i in range(locations.shape[0]):
+        fips = fips_lookup(locations[i,0], locations[i,1])
+        case_data = df.loc[df['FIPS'] == fips].values[0,start_index:]
 
 
-        index_loc = list(data[:,0]).index(locations[i]) # finds index of a given county
-        case_delta = np.diff(data[index_loc,2:],prepend=0)
-        case_delta[138] = 4
-        case_delta[142] = 0
+        ## Data Plotting
+
+        pop_factor = pop_lookup(fips)/100e3 # per 100k people
+        case_delta = np.diff(case_data, prepend=0)
+
 
         D = pd.Series(case_delta)
-        d_mvs = D.rolling(roll_amount).sum() # new cases in past [14] 
+        d_mvs = D.rolling(14).sum() # new cases in past [14] 
         d_mvs_pop = d_mvs/pop_factor # new cases in past [14] days per 100k
 
         wk_new_cases = int(np.sum(case_delta[-8:]))
         total_cases = int(np.sum(case_delta[:]))
 
-        plt.plot(dates[2:],d_mvs_pop, label=locations[i] + ' County')
+        plt.plot(dates,d_mvs_pop, label=locations[i,0] + ' County')
         plt.plot([],[],label = "Total Cases: " + f"{total_cases:,}", color = "white")
         plt.plot(dates[-8:],d_mvs_pop[-8:],linewidth = 5, alpha = 0.6, color = "gray")
         plt.plot([],[],label = "Cases in Past Week: " + f"{wk_new_cases:,}",color = "white")
@@ -47,11 +68,12 @@ def plot_biwk_sum(data,locations,dates,pop_dict):
     ax.set( 
         ylabel= 'Cases', 
         xlabel = 'Date',
-        title = 'COVID-19 Cases in 14 Days per 100k People ({})'.format(today)
+        title = 'COVID-19 | 14 Day sum per 100k People ({})'.format(today)
         )
 
+    plt.ylim(0)
 
-    ax.legend(loc='upper center', ncol = len(locations), bbox_to_anchor=(0.5, -0.3))
+    ax.legend(loc='upper center', ncol = locations.shape[0], bbox_to_anchor=(0.5, -0.3))
     fig.subplots_adjust(bottom = 0.1)
 
     ax.xaxis.set_major_locator(mdates.DayLocator(bymonthday=(1,15)))
@@ -60,31 +82,9 @@ def plot_biwk_sum(data,locations,dates,pop_dict):
 
     plt.tight_layout()
     plt.show()
-    
-    fig.savefig(locations[0] + '_biwk_sum.png')
 
+    fig.savefig(locations[0,0] + "_biwk_sum.png")   
 
-def plot_cum_cases(data,locations,dates):
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.grid()
-
-    ## Data Plotting
-    for i in range(len(locations)):
-        index_loc = list(data[:,0]).index(locations[i]) # finds index of a given county
-        ax.plot(dates[2:],data[index_loc,2:])
-
-    ax.set( 
-        ylabel= 'Cases', 
-        xlabel = 'Date',
-        title = 'Cumulative Total of Cases'
-        # legend: title = '%s County' %(locations[i])
-        )
-    ax.xaxis.set_major_locator(mdates.DayLocator(bymonthday=(1,15)))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%y'))
-    plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
-
-    plt.show()
 
 def plot_state_data(state_data, dates):
 
