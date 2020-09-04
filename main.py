@@ -20,8 +20,8 @@ def csv_to_array(file): # converts csv to data array
 
 
 ## Data Import
-state_data = csv_to_array("/home/bhabas/Documents/Covid_Plot/COVID-19 Tracking Workbook - PA - Pgh MSA Data.csv")
-county_data = csv_to_array("/home/bhabas/Documents/Covid_Plot/COVID-19 Tracking Workbook - PA - 14 Day per 100k by Region_County.csv")
+state_data = csv_to_array("/home/bhabas/Documents/Covid-Plots/COVID_PA_Plot/COVID-19 Tracking Workbook - PA - Pgh MSA Data.csv")
+county_data = csv_to_array("/home/bhabas/Documents/Covid-Plots/COVID_PA_Plot/COVID-19 Tracking Workbook - PA - 14 Day per 100k by Region_County.csv")
 
 county_avg = county_data[94:160,:]
 

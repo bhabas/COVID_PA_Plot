@@ -47,7 +47,7 @@ def plot_biwk_sum(data,locations,dates,pop_dict):
     ax.set( 
         ylabel= 'Cases', 
         xlabel = 'Date',
-        title = 'COVID-19 Cases in 14 Days per 100k People ({})'.format(today)
+        title = 'COVID-19 | 14 Day sum per 100k People ({})'.format(today)
         )
 
 
