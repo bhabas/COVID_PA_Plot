@@ -16,10 +16,10 @@ def csv_to_array(file): # converts csv to data array
     return(data_array, df)
 
 
+df = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 
 
-    
-
+dates = df.columns.values.tolist()[64:]
 
 
 ## Data Import
@@ -27,14 +27,14 @@ def csv_to_array(file): # converts csv to data array
 # County Data
 
 
-locations = np.array([["Erie", "PA"], ["Centre", "PA"]])
+# locations = np.array([["Erie", "PA"], ["Centre", "PA"]])
 
 
 
 
 
 
-cp.plot_biwk_sum(locations)
+# cp.plot_biwk_sum(locations)
 
 
 
