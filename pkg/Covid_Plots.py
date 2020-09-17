@@ -9,18 +9,14 @@ from datetime import datetime
 
 def fips_lookup(county,state):
 
-    url = 'https://raw.githubusercontent.com/kjhealy/fips-codes/master/state_and_county_fips_master.csv'
-    df = pd.read_csv(url)
-
+    df = pd.read_csv('fips_dict.csv')
     fips = df.loc[(df['state'] == state) & (df['name'] == county + " County")].values[0,0]
 
     return(fips)
 
-def pop_lookup(fips):
-    df = pd.read_csv("CSV Files/county_population.csv", encoding = "latin")
-
-    population = df.loc[df['fips'] == fips].values[:,-1] # reads last columns values which are 2014 pop
-    population = np.nanmax(population) # finds max of two (ignoring nan) since val loc are random
+def pop_lookup(county,state):
+    df = pd.read_csv('co-est2019-alldata.csv', encoding = "latin")
+    population = df.loc[(df['STNAME'] == state) & (df['CTYNAME'] == county+" County")].values[0,7]
     return(population)
 
 
@@ -36,7 +32,7 @@ def plot_biwk_sum(locations):
 
     ## Figure Initializing
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111)
     ax.grid()
 
@@ -46,34 +42,34 @@ def plot_biwk_sum(locations):
 
 
         ## Data Plotting
-
-        pop_factor = pop_lookup(fips)/100e3 # per 100k people
+        population = pop_lookup(locations[i,0],locations[i,2])
+        pop_factor = population/100e3 # per 100k people
         case_delta = np.diff(case_data, prepend=0)
 
 
         D = pd.Series(case_delta)
-        d_mvs = D.rolling(14).sum() # new cases in past [14] 
+        d_mvs = D.rolling(14).sum() # new cases in past [14]
         d_mvs_pop = d_mvs/pop_factor # new cases in past [14] days per 100k
 
         wk_new_cases = int(np.sum(case_delta[-8:]))
         total_cases = int(np.sum(case_delta[:]))
 
-        plt.plot(dates,d_mvs_pop, label=locations[i,0] + ' County')
+        plt.plot(dates,d_mvs_pop, label=locations[i,0] + ' County, ' + locations[i,1])
         plt.plot([],[],label = "Total Cases: " + f"{total_cases:,}", color = "white")
         plt.plot(dates[-8:],d_mvs_pop[-8:],linewidth = 5, alpha = 0.6, color = "gray")
         plt.plot([],[],label = "Cases in Past Week: " + f"{wk_new_cases:,}",color = "white")
-        
+        plt.plot([],[],label = "Population: "+ f"{population:,}",color = "white")
 
 
-    ax.set( 
-        ylabel= 'Cases', 
-        xlabel = 'Date',
-        title = 'COVID-19 | 14 Day sum per 100k People ({})'.format(today)
+    ax.set(
+        ylabel= 'Cases',
+        xlabel= 'Date',
+        title= 'COVID-19 | 14 Day Sum per 100k People ({})'.format(today)
         )
 
     plt.ylim(0)
 
-    ax.legend(loc='upper center', ncol = locations.shape[0], bbox_to_anchor=(0.5, -0.3))
+    ax.legend(ncol = 3, loc='upper center', bbox_to_anchor=(0.5, -0.5))
     fig.subplots_adjust(bottom = 0.1)
 
     ax.xaxis.set_major_locator(mdates.DayLocator(bymonthday=(1,15)))
@@ -83,7 +79,7 @@ def plot_biwk_sum(locations):
     plt.tight_layout()
     plt.show()
 
-    fig.savefig(locations[0,0] + "_biwk_sum.png")   
+    fig.savefig(locations[0,0] + "_biwk_sum.png")
 
 
 def plot_state_data(state_data, dates):
@@ -120,8 +116,8 @@ def plot_state_data(state_data, dates):
 
 
 
-    ax1.set( 
-        ylabel= 'Cases', 
+    ax1.set(
+        ylabel= 'Cases',
         title = 'PA New COVID-19 Cases per Day ({})'.format(today)
         )
 

@@ -9,17 +9,18 @@ import matplotlib.dates as mdates
 
 
 
-def csv_to_array(file): # converts csv to data array
-    df = pd.read_csv(file, delimiter=',')
-    data_array = df.to_numpy()
-
-    return(data_array, df)
 
 
-df = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
+# data_df = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
+
+# fips = cp.fips_lookup("Centre","PA")
+# pop = cp.pop_lookup(fips)
+# print(pop)
+# dates = data_df.columns.values.tolist()[64:]
 
 
-dates = df.columns.values.tolist()[64:]
+
+
 
 
 ## Data Import
@@ -27,14 +28,17 @@ dates = df.columns.values.tolist()[64:]
 # County Data
 
 
-# locations = np.array([["Erie", "PA"], ["Centre", "PA"]])
+locations = np.array([
+["Centre", "PA", "Pennsylvania"],
+["Los Angeles", "CA", "California"],
+["New York", "NY", "New York"]])
+
+
+# df = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csvNew York')
 
 
 
-
-
-
-# cp.plot_biwk_sum(locations)
+cp.plot_biwk_sum(locations)
 
 
 
