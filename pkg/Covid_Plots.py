@@ -9,18 +9,18 @@ from datetime import datetime
 
 def fips_lookup(county,state):
 
-    df = pd.read_csv('fips_dict.csv')
+    df = pd.read_csv('/home/bhabas/Documents/Covid-Plots/COVID_PA_Plot/fips_dict.csv')
     fips = df.loc[(df['state'] == state) & (df['name'] == county + " County")].values[0,0]
 
     return(fips)
 
 def pop_lookup(county,state):
-    df = pd.read_csv('co-est2019-alldata.csv', encoding = "latin")
+    df = pd.read_csv('/home/bhabas/Documents/Covid-Plots/COVID_PA_Plot/co-est2019-alldata.csv', encoding = "latin")
     population = df.loc[(df['STNAME'] == state) & (df['CTYNAME'] == county+" County")].values[0,18]
     return(population)
 
 def state_pop_lookup(state):
-    df = pd.read_csv('co-est2019-alldata.csv', encoding = "latin")
+    df = pd.read_csv('/home/bhabas/Documents/Covid-Plots/COVID_PA_Plot/co-est2019-alldata.csv', encoding = "latin")
     population = df.loc[(df['STNAME'] == state) & (df['CTYNAME'] == state)].values[0,18]
     return(population)
 def plot_biwk_sum(locations):
@@ -59,7 +59,7 @@ def plot_biwk_sum(locations):
 
         plt.plot(dates,d_mvs_pop, label=locations[i,0] + ' County, ' + locations[i,1])
         plt.plot([],[],label = "Total Cases: " + f"{total_cases:,}", color = "white")
-        plt.plot(dates[-8:],d_mvs_pop[-8:],linewidth = 5, alpha = 0.6, color = "gray")
+        plt.plot(dates[-8:],d_mvs_pop[-8:],linewidth = 5, alpha = 0.5, color = "gray")
         plt.plot([],[],label = "Cases in Past Week: " + f"{wk_new_cases:,}",color = "white")
         plt.plot([],[],label = "Population: "+ f"{population:,}",color = "white")
 
